@@ -1,0 +1,177 @@
+MODE: 2             # 1: train, 2: test, 3: eval
+MODEL: 1            # 1: edge model, 2: inpaint model, 3: edge-inpaint model, 4: joint model
+MASK: 6             # 1: random block, 2: half, 3: external, 4: (external, random block), 5: (external, random block, half)
+EDGE: 1             # 1: canny, 2: external
+NMS: 1              # 0: no non-max-suppression, 1: applies non-max-suppression on the external edges by multiplying by Canny
+SEED: 11            # random seed
+GPU: [0]            # list of gpu ids
+DEBUG: 0            # turns on debugging mode
+VERBOSE: 0          # turns on verbose mode in the output console
+
+TRAIN_FLIST: ./flists/structured3d_roomtype/structured3d_roomtype/train.flist
+VAL_FLIST: ./flists/structured3d_roomtype/structured3d_roomtype/val.flist
+TEST_FLIST: D:\Data\Projects\sturcture-inpainting\painter\places2_test
+
+TRAIN_EDGE_FLIST: ./datasets/places2_edges_train.flist
+VAL_EDGE_FLIST: ./datasets/places2_edges_val.flist
+TEST_EDGE_FLIST: ./dataset/test/edge/
+
+TRAIN_MASK_FLIST: ./datasets/masks_train.flist
+VAL_MASK_FLIST: ./datasets/masks_val.flist
+TEST_MASK_FLIST: D:\Data\Projects\sturcture-inpainting\painter\places2_test_mask
+
+LR: 0.0001                    # learning rate
+D2G_LR: 0.1                   # discriminator/generator learning rate ratio
+BETA1: 0.0                    # adam optimizer beta1
+BETA2: 0.9                    # adam optimizer beta2
+BATCH_SIZE: 4                 # input batch size for training
+INPUT_SIZE: 256               # input image size for training 0 for original size
+SIGMA: 1.5                      # standard deviation of the Gaussian filter used in Canny edge detector (0: random, -1: no edge)
+MAX_ITERS: 2e7                # maximum number of iterations to train the model
+
+EDGE_THRESHOLD: 0.5           # edge detection threshold
+L1_LOSS_WEIGHT: 1             # l1 loss weight
+FM_LOSS_WEIGHT: 10            # feature-matching loss weight
+STYLE_LOSS_WEIGHT: 250        # style loss weight
+CONTENT_LOSS_WEIGHT: 0.1      # perceptual loss weight
+INPAINT_ADV_LOSS_WEIGHT: 0.1  # adversarial loss weight
+
+GAN_LOSS: nsgan               # nsgan | lsgan | hinge
+GAN_POOL_SIZE: 0              # fake images pool size
+
+SAVE_INTERVAL: 1           # how many iterations to wait before saving model (0: never)
+SAMPLE_INTERVAL: 1         # how many iterations to wait before sampling (0: never)
+SAMPLE_SIZE: 12               # number of images to sample
+EVAL_INTERVAL: 0              # how many iterations to wait before model evaluation (0: never)
+LOG_INTERVAL: 10              # how many iterations to wait before logging training status (0: never)
+
+########################################################################################################
+# parameters
+CUSTOM_DATASET: True
+MASK_MODE: 'regular'                            # 'irregular'
+DATASET: 'structured3D_360'                     # 'places2',  'celeba_align'
+VGG_DIR: 'imagenet-vgg-verydeep-19.mat'
+
+RANDOM_CROP: False
+
+
+LOG_DIR: logs
+CHECKPOINT_DIR: checkpoint
+MODEL_DIR: ''
+SAMPLE_DIR: sample
+RESULT_DIR: result
+MODEL_RESTORE: 'finetune_360'    # 'places2' 'celeba_align', if train from scratch set ''
+
+
+# parameters in other related papers
+# 1. Pconv: Ltotal = Lvalid+6Lhole+0.05Lperceptual+120(Lstyleout+Lstylecomp)+0.1Ltv (pool1, pool2, pool3)
+# 2. EdgeConnect: l1 = 1, Ladv = 0.1, Lperceptual=0.1, Lstyle=250 (relu_1,...relu_5)
+# 3. SC-FEGAN: l1 = 1, Ladv=0.001, Lperceptual=0.05, Lstyle=120, Ltv=0.1 (pool1, pool2, pool3)
+
+# l1 loss
+L1_FORE_ALPHA: 1.   # may weight more, such as 1.5
+L1_BACK_ALPHA: 1.
+
+L1_SCALE: 0.        # for down scaled image's l1 loss, (Don't used in default. Only regularize on the structures.)
+                    # we found that l1 for pixel and gradients are contradicted in some extent
+
+# content, style loss
+BACKGROUND_LOSS: True      # for content and style loss
+CONTENT_FORE_ALPHA: 0.1    # layers see in loss.py
+CONTENT_BACK_ALPHA: 0.1
+STYLE_FORE_ALPHA: 250.     # layers see in loss.py
+STYLE_BACK_ALPHA: 250.
+
+# tv loss
+TV_ALPHA: 0.
+
+
+# gan loss
+GAN_TYPE: 'patch_gan'     # 'wgan_gp'
+GAN_LOSS_TYPE: 'hinge'    # 'hinge', 'gan'
+SN: True
+PATCH_GAN_ALPHA: 0.4      # weight: best tuned in range [0.1, 0.8]
+GP_ALPHA: 0.
+
+# edge, grad loss
+ALPHA: 1.                 # weight auxiliary Edge task, taking weight values corresponding to main task
+EDGE_ALPHA: 20.           # edge weight = EDGE_ALPHA * priority; priority in (0, 1)
+# grad reconstruction
+GRAD_ALPHA: 0.1           # grad weight
+
+
+# other loss (Don't use in default)
+# grad matching
+GRAD_MATCHING_ALPHA: 0.0
+PATCH_SIZE: 5
+STRIDE_SIZE: 3
+# image matching
+IMG_MATCHING_ALPHA: 0.
+
+
+# training
+RANDOM_SEED: False
+PADDING: 'REFLECT'        # 'REFLECT' 'SAME'
+
+G_LR: 0.00001
+D_LR: 0.00001
+
+
+NUM_GPUS: 1              # number of gpus, support multi-gpu setting
+GPU_ID: [0]              # list of gpu ids [..]
+
+EPOCH: 10                # training epochs
+PRINT_FREQ: 10           # print training info in steps
+SAVE_FREQ: 2000          # saving checkpoint (in steps)
+LOG_FREQ: 10           # logs, viewed in tensorboard (in steps)
+VIZ_MAX_OUT: 8           # middle results, viewed in tensorboard
+
+# validation and test
+VAL: True
+VAL_NUM: 2
+STATIC_VIEW: True
+VAL_FREQ: 8000
+
+TEST_NUM: 6
+MAX_TEST_NUM: 1000    #
+
+# image data dir
+DATA_FLIST:
+  # https://github.com/JiahuiYu/progressive_growing_of_gans_tf
+  celeba_align: [
+    'data/celeba_align/train_shuffled.flist',
+    'data/celeba_align/validation_shuffled.flist'
+  ]
+  # http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html, please to use RANDOM_CROP: True
+  celeba_hq_sample: [
+    'data/celeba_hq_sample/train_shuffled.flist',
+    'data/celeba_hq_sample/validation_shuffled.flist'
+  ]
+  # http://places2.csail.mit.edu/, please download the high-resolution dataset and use RANDOM_CROP: True
+  places2: [
+    'data/places2/train_shuffled.flist',
+    'data/places2/validation_shuffled.flist'
+  ]
+  facade: [
+    'data/facade/train_shuffled.flist',
+    'data/facade/validation_shuffled.flist'
+  ]
+  dtd: [
+    'data/facade/train_shuffled.flist',
+    'data/facade/validation_shuffled.flist'
+  ]
+  structured3D: [
+    'data/structured3D/training_image.flist',
+    'data/structured3D/val_image.flist'
+  ]
+  structured3D_360: [
+    'data/structured3D_360/train_rename.txt',
+    'data/structured3D_360/val_rename.txt'
+  ]
+
+
+
+# regular mask
+IMG_SHAPES: [256, 256, 3]
+HEIGHT: 128
+WIDTH: 128
