@@ -56,7 +56,7 @@ python main.py --checkpoint <checkpoint_dir>
 Download link:
 https://drive.google.com/drive/folders/1DwqL-aoPJsx8aLuREzXV_glDSP5dNCHD?usp=sharing
 
-Place according to the location of the folder.
+Place pretrained weigtht files in your checkpoint folder.
 
 [//]: # ()
 
