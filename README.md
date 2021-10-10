@@ -29,7 +29,7 @@ If you have any questions about the code logic, you can refer to the source code
 | src/network.py | Build the neural network architecture. |
 | src/loss.py | Loss function defination.|
 | src/ops.py | Convolution layer; attention modul... |
-| src/resnet.py | Resnet.|
+| src/resnet.py | Resnet|
 | src/util.py | Some image processing/visualization  tools(refer to [EdgeConnect]). |
 | src/scripts.py | Weight conversion script between Tensorflow and PyTorch.|
 | config.yml.example | Configuration template file. |
